@@ -6,6 +6,13 @@
 // may not be copied or disclosed except in accordance with the terms of
 // that agreement.
 
+// HACK: Prevent WinGDI bug from causing typedef confusion with the s32 typedef.
+#ifdef WIRE_WII
+#if __INTELLISENSE__ == 1
+#define _WINGDI_
+#endif
+#endif
+
 #include "WireWiiInputSystem.h"
 
 #include "WireApplication.h"
@@ -74,7 +81,7 @@ WiiInputDataBuffer* WiiInputSystem::GetChannelDataBuffer(UInt channel)
 
 void WiiInputSystem::Capture()
 {
-	WPAD_ReadPending(WPAD_CHAN_ALL,	&WiiInputSystem::ReadWPADPendingEventsCallback);
+	WPAD_ReadPending(WPAD_CHAN_ALL, &WiiInputSystem::ReadWPADPendingEventsCallback);
 
 	for (UInt i = 0; i < mMainDevices.GetQuantity(); i++)
 	{
