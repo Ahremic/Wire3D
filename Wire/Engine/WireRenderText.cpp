@@ -176,14 +176,14 @@ Bool RenderText::Append(const Char* pText, Float x, Float y)
 
 	BoundingVolume* pModelBound = GetMesh()->GetModelBound();
 	WIRE_ASSERT(pModelBound);
-	Vector2F min(System::MAX_FLOAT, System::MAX_FLOAT);
-	Vector2F max(System::MIN_FLOAT, System::MIN_FLOAT);
+	Vector2F vMin(System::MAX_FLOAT, System::MAX_FLOAT);
+	Vector2F vMax(System::MIN_FLOAT, System::MIN_FLOAT);
 	Float radius = pModelBound->GetRadius();
 	Vector3F center3 = pModelBound->GetCenter();
 	if (radius != 0)
 	{
-		min = Vector2F(center3.X() - radius, center3.Y() - radius);
-		max = Vector2F(center3.X() + radius, center3.Y() + radius);
+		vMin = Vector2F(center3.X() - radius, center3.Y() - radius);
+		vMax = Vector2F(center3.X() + radius, center3.Y() + radius);
 	}
 
 	for (UInt j = 0; pText[j]; j++)
@@ -224,10 +224,10 @@ Bool RenderText::Append(const Char* pText, Float x, Float y)
 		const Float x1 = x + cWidth;
 		const Float cy1 = cy + cHeight;
 
-		min.X() = min.X() > x ? x : min.X();
-		max.X() = max.X() < x1 ? x1 : max.X();
-		min.Y() = min.Y() > cy1 ? cy : min.Y();
-		max.Y() = max.Y() < cy1 ? cy1 : max.Y();
+		vMin.X() = vMin.X() > x ? x : vMin.X();
+		vMax.X() = vMax.X() < x1 ? x1 : vMax.X();
+		vMin.Y() = vMin.Y() > cy1 ? cy : vMin.Y();
+		vMax.Y() = vMax.Y() < cy1 ? cy1 : vMax.Y();
 
 		pVertexBuffer->Position3(i) = Vector3F(x, cy1, 0);
 		pVertexBuffer->Color4(i) = mColor;
@@ -251,9 +251,9 @@ Bool RenderText::Append(const Char* pText, Float x, Float y)
 	GetMesh()->SetIndexCount(GetMesh()->GetIndexCount() + indexCount*6);
 	mIsPdrBufferOutOfDate = true;
 
-	Vector2F center((max.X()+min.X()) * 0.5F, (max.Y()+min.Y()) * 0.5F);
+	Vector2F center((vMax.X()+vMin.X()) * 0.5F, (vMax.Y()+vMin.Y()) * 0.5F);
 	pModelBound->SetCenter(Vector3F(center.X(), center.Y(), 0));
-	pModelBound->SetRadius((center - min).Length());
+	pModelBound->SetRadius((center - vMin).Length());
 
 	mPenX = x;
 	mPenY = y;
