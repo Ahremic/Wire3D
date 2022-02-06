@@ -26,9 +26,14 @@ Double System::GetTime()
 	ULongLong ticks = gettime();
 	ULongLong deltaTicks = ticks - s_InitialTicks;
 
-	Double deltaSec = static_cast<Double>(ticks_to_millisecs(deltaTicks));
+	// HACK: Higher precision time due to erroneous use of integer division in Devkit Pro
+	// TODO: Introduce this in a different library, possibly watchdog_highprecision, if we need more time methods like this. 
+#define ticks_to_millisecs_hp(ticks)	(((double)(ticks)/(double)(TB_TIMER_CLOCK)))
 
-	return 0.001 * deltaSec;
+	const Double milliseconds = static_cast<Double>(ticks_to_millisecs_hp(deltaTicks));
+
+	// Convert to seconds
+	return 0.001 * milliseconds;
 }
 
 //----------------------------------------------------------------------------
