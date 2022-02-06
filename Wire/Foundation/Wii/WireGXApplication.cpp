@@ -40,6 +40,9 @@ Int GXApplication::Main(Int argumentQuantity, Char* arguments[])
 {
 	fatInitDefault();
 
+	SYS_SetResetCallback(CALLBACK_Reset);
+	SYS_SetPowerCallback(CALLBACK_Shutdown);
+
 	// allow work to be done before the renderer is created
 	if (!s_pApplication->OnPrecreate())
 	{
@@ -78,5 +81,20 @@ Int GXApplication::Main(Int argumentQuantity, Char* arguments[])
 
 	s_pApplication->OnTerminate();
 
+	// Wii-specific termination
+	SYS_ResetSystem(SYS_POWEROFF, 0, 0);
+
 	return 0;
+}
+
+//----------------------------------------------------------------------------
+void GXApplication::CALLBACK_Shutdown()
+{
+	s_pApplication->Close();
+}
+
+void GXApplication::CALLBACK_Reset(u32 irq, void* ctx)
+{
+	// TODO: Make "reset" return to the system menu or, ideally, homebrew channel.
+	s_pApplication->Close();
 }

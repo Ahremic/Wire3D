@@ -31,6 +31,12 @@ private:
 	// Entry point to be implemented by the application. The return value is
 	// an exit code, if desired.
 	virtual Int Main(Int argumentQuantity, Char* arguments[]);
+
+	// Wii specific callback functions, allow for proper shutdown procedure.
+	// Without these, the application cannot shut down safely on an emulator,
+	// and the only option on hardware is to power off the console.
+	static void CALLBACK_Shutdown();
+	static void CALLBACK_Reset(u32 irq, void* ctx);
 };
 
 }
